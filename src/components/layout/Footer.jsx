@@ -41,10 +41,10 @@ export default function Footer() {
         {/* Columna 4: Contacto / Redes */}
         <div>
           <h4 className="text-white font-semibold mb-4">Contacto</h4>
-          <p className="text-sm">hola@nexorastudios.com</p>
+          <p className="text-sm">javielitoignacio22@gmail.com</p>
           <div className="mt-4 flex gap-4 text-lg">
-            <a href="#" className="hover:text-cyan-400 transition">🌐</a>
-            <a href="#" className="hover:text-cyan-400 transition">💻</a>
+            <a href="https://wa.me/18093835504" className="hover:text-cyan-400 transition" target="_blank" rel="noopener noreferrer">🌐</a>
+            <a href="mailto:javielitoignacio22@gmail.com" className="hover:text-cyan-400 transition">💻</a>
             <a href="#" className="hover:text-cyan-400 transition">📱</a>
           </div>
         </div>

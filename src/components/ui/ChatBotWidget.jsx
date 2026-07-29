@@ -57,14 +57,25 @@ export default function ChatBotWidget() {
 
   return (
     <div className="fixed bottom-6 right-6 z-50">
-      {/* Botón flotante para abrir/cerrar */}
+      {/* Botón flotante mejorado para abrir/cerrar */}
       {!isOpen && (
-        <button
-          onClick={() => setIsOpen(true)}
-          className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 p-4 rounded-full shadow-lg shadow-cyan-500/25 flex items-center justify-center transition transform hover:scale-105 text-xl"
-        >
-          💬
-        </button>
+        <div className="flex items-center gap-3">
+          {/* Mensaje flotante animado de bienvenida */}
+          <div className="hidden sm:block bg-slate-900 text-cyan-400 text-xs font-semibold px-3.5 py-2 rounded-xl border border-slate-800 shadow-xl animate-bounce">
+            👋 ¡Hola! ¿Necesitas ayuda?
+          </div>
+
+          {/* Botón principal del Chatbot */}
+          <button
+            onClick={() => setIsOpen(true)}
+            className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 p-4 rounded-full shadow-2xl shadow-cyan-500/40 flex items-center justify-center transition transform hover:scale-110 border-2 border-cyan-300/40 text-2xl relative"
+            aria-label="Abrir chat"
+          >
+            <span className="animate-pulse">💬</span>
+            {/* Indicador de estado en línea */}
+            <span className="absolute top-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-slate-950 rounded-full"></span>
+          </button>
+        </div>
       )}
 
       {/* Ventana flotante del Chatbot */}

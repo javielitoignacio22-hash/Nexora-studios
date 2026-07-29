@@ -90,6 +90,39 @@ export default function About() {
           </div>
         </div>
 
+        {/* Sección del Creador */}
+        <div className="my-24 p-8 md:p-12 rounded-3xl bg-slate-900/80 border border-slate-800 max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-8 shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-40 h-40 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+
+          {/* Foto del Creador */}
+          <div className="relative flex-shrink-0">
+            <div className="w-36 h-36 md:w-44 md:h-44 rounded-full overflow-hidden border-4 border-cyan-500/40 shadow-xl shadow-cyan-500/20">
+              <img 
+                src="/creador.jpeg" 
+                alt="Javier - Creador de Nexora Studios" 
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <span className="absolute bottom-2 right-2 bg-slate-950 text-cyan-400 p-2 rounded-full border border-slate-800 text-xs font-bold" title="Fundador">
+              🇩🇴
+            </span>
+          </div>
+
+          {/* Texto e Información del Creador */}
+          <div className="text-center md:text-left space-y-3">
+            <span className="text-cyan-400 font-semibold text-xs uppercase tracking-wider">Fundador & Creador</span>
+            <h3 className="text-2xl md:text-3xl font-extrabold text-white">Javier</h3>
+            <p className="text-gray-300 text-sm leading-relaxed">
+              Diseñador y creador de sitios web, joven emprendedor dominicano de 21 años. Apasionado por la tecnología, siempre abierto a adquirir nuevos conocimientos e incorporar herramientas innovadoras como Inteligencia Artificial y automatización para hacer crecer cada negocio.
+            </p>
+            <div className="pt-2 flex flex-wrap justify-center md:justify-start gap-4 text-xs text-gray-400">
+              <span>🇩🇴 Orgullo Dominicano</span>
+              <span>⚡ Innovación & Aprendizaje Continuo</span>
+              <span>🤝 Compromiso Total</span>
+            </div>
+          </div>
+        </div>
+
         {/* Llamado a la acción */}
         <div className="p-8 md:p-12 rounded-3xl bg-slate-900 border border-slate-800 text-center">
           <h3 className="text-2xl md:text-3xl font-bold">¿Quieres saber cómo podemos ayudarte?</h3>

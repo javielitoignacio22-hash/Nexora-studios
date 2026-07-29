@@ -55,7 +55,7 @@ export default function Contact() {
               <h3 className="text-lg font-bold text-white">WhatsApp Directo</h3>
               <p className="text-sm text-gray-400 mt-1">¿Prefieres una respuesta más rápida? Escríbenos.</p>
               <a 
-                href="https://wa.me/1234567890" 
+                href="https://wa.me/18093835504" 
                 target="_blank" 
                 rel="noreferrer"
                 className="inline-block mt-4 text-cyan-400 hover:text-cyan-300 font-semibold text-sm"
@@ -69,10 +69,10 @@ export default function Contact() {
               <h3 className="text-lg font-bold text-white">Correo Electrónico</h3>
               <p className="text-sm text-gray-400 mt-1">Escríbenos directamente a nuestra bandeja.</p>
               <a 
-                href="mailto:contacto@nexorastudios.com" 
+                href="mailto:javielitoignacio22@gmail.com" 
                 className="inline-block mt-4 text-cyan-400 hover:text-cyan-300 font-semibold text-sm"
               >
-                contacto@nexorastudios.com
+                javielitoignacio22@gmail.com
               </a>
             </div>
 
