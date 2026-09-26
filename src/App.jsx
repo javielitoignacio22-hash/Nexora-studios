@@ -1,37 +1,44 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Navbar from "./components/layout/Navbar.jsx";
-import Footer from "./components/layout/Footer.jsx";
-import ChatBotWidget from "./components/ui/ChatBotWidget.jsx";
+import { useEffect, useState } from 'react';
+import { ArrowUpRight, ShieldCheck, LockKeyhole, Eye, EyeOff, MessageCircle, LogOut, Layers3, Users, Plus, ChevronRight, LoaderCircle, Check, Bitcoin } from 'lucide-react';
+import './App.css';
 
-import Home from "./pages/Home.jsx";
-import Services from "./pages/Services.jsx";
-import Portfolio from "./pages/Portfolio.jsx";
-import About from "./pages/About.jsx";
-import Contact from "./pages/Contact.jsx";
-
-function App() {
-  return (
-    <BrowserRouter>
-      <div className="min-h-screen flex flex-col bg-[#0B0F19] relative">
-        <Navbar />
-
-        <main className="flex-grow">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/servicios" element={<Services />} />
-            <Route path="/portafolio" element={<Portfolio />} />
-            <Route path="/nosotros" element={<About />} />
-            <Route path="/contacto" element={<Contact />} />
-          </Routes>
-        </main>
-
-        <Footer />
-
-        {/* Chatbot flotante en todas las páginas */}
-        <ChatBotWidget />
-      </div>
-    </BrowserRouter>
-  );
+const whatsapp = message => `https://wa.me/18093835504?text=${encodeURIComponent(message)}`;
+async function request(action, data) {
+  let response;
+  try { response = await fetch(`/api/portal?action=${action}`, data === undefined ? { credentials: 'same-origin' } : { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }); }
+  catch { throw new Error('No se pudo conectar. Comprueba tu conexión e inténtalo de nuevo.'); }
+  let result;
+  try { result = await response.json(); } catch { throw new Error('El servidor de acceso no está disponible. Revisa la configuración de Vercel.'); }
+  if (!response.ok) { const error = new Error(result.error || 'No se pudo completar la operación.'); error.status = response.status; throw error; }
+  return result;
 }
-
-export default App;
+function Brand() { return <div className="brand"><span className="brand-mark">N<span>.</span></span><span>NEXORA<span className="brand-sub">PRIVATE ACCESS</span></span></div>; }
+function WhatsApp({ children, message = 'Hola, quiero solicitar una cuenta de Nexora.', className = '' }) { return <a className={className} href={whatsapp(message)} target="_blank" rel="noopener noreferrer"><MessageCircle size={17}/>{children}<ArrowUpRight size={16}/></a>; }
+function Password({ id, label, value, onChange, autoComplete = 'current-password', minLength }) {
+  const [visible, setVisible] = useState(false);
+  return <label className="field" htmlFor={id}>{label}<span className="password-field"><input id={id} type={visible ? 'text' : 'password'} value={value} onChange={onChange} required minLength={minLength} maxLength={128} autoComplete={autoComplete}/><button type="button" className="eye" onClick={() => setVisible(!visible)} aria-label={visible ? 'Ocultar contraseña' : 'Mostrar contraseña'}>{visible ? <EyeOff size={18}/> : <Eye size={18}/>}</button></span></label>;
+}
+function Login({ onLogin, initialError }) {
+  const [mode, setMode] = useState('user'); const [email, setEmail] = useState(''); const [password, setPassword] = useState(''); const [busy, setBusy] = useState(false); const [error, setError] = useState(initialError || '');
+  async function submit(event) { event.preventDefault(); setBusy(true); setError(''); try { const data = await request('login', { email, password, mode }); onLogin(data.user); } catch (err) { setError(err.message); } finally { setBusy(false); } }
+  return <div className="login-shell"><header className="public-header"><Brand/><span className="header-note"><LockKeyhole size={14}/> ACCESO RESTRINGIDO</span></header><main className="login-main"><section className="login-story"><div className="overline"><span className="short-line"/> EXCLUSIVAMENTE POR INVITACIÓN</div><h1>No es para<br/>todo el mundo<span className="accent">.</span></h1><p>Tu acceso. Tu espacio.<br/>El resto queda afuera.</p><div className="story-bottom"><ShieldCheck size={25}/><div>Un espacio reservado.<span>Solo cuentas autorizadas por administración.</span></div></div><div className="edition">NEXORA STUDIOS <span>EST. 2026 / PRIVATE AREA</span></div></section><section className="login-card"><div className="card-top"><span className="lock-tile"><LockKeyhole size={21}/></span><span className="tiny">IDENTIFICACIÓN REQUERIDA</span></div><h2>{mode === 'admin' ? 'Acceso de administrador' : 'Bienvenido de nuevo'}</h2><p className="card-description">{mode === 'admin' ? 'Gestiona las cuentas de tu espacio privado.' : 'Identifícate para consultar nuestros packs.'}</p><div className="login-tabs" role="group" aria-label="Tipo de acceso"><button className={mode === 'user' ? 'selected' : ''} onClick={() => {setMode('user'); setError('');}}>Usuario</button><button className={mode === 'admin' ? 'selected' : ''} onClick={() => {setMode('admin'); setError('');}}>Administrador</button></div><form onSubmit={submit}><label className="field" htmlFor="email">Correo electrónico<input type="email" id="email" autoComplete="username" placeholder="tu@correo.com" value={email} onChange={e => setEmail(e.target.value)} required maxLength={254}/></label><Password id="password" label="Contraseña" value={password} onChange={e => setPassword(e.target.value)}/><p className="feedback error" role="alert">{error}</p><button className="primary wide" disabled={busy}>{busy ? <><LoaderCircle className="spin" size={18}/> Verificando…</> : <>Entrar al espacio privado <ArrowUpRight size={18}/></>}</button></form><div className="request-account"><span>¿Todavía no tienes acceso?</span><WhatsApp className="whatsapp-link">Solicitar cuenta por WhatsApp</WhatsApp><small>Las cuentas se crean de forma privada.</small></div></section></main><footer className="public-footer"><span>© {new Date().getFullYear()} NEXORA STUDIOS</span><span>PRIVACIDAD POR DISEÑO. ACCESO POR INVITACIÓN.</span></footer></div>;
+}
+function Accounts({ onExpired }) {
+  const [accounts, setAccounts] = useState([]); const [name, setName] = useState(''); const [email, setEmail] = useState(''); const [password, setPassword] = useState(''); const [confirm, setConfirm] = useState(''); const [busy, setBusy] = useState(false); const [loading, setLoading] = useState(true); const [feedback, setFeedback] = useState(''); const [success, setSuccess] = useState(false);
+  useEffect(() => { let active = true; request('users').then(data => { if (active) setAccounts(data.users); }).catch(err => { if (active) { setFeedback(err.message); if (err.status === 401) onExpired(); } }).finally(() => { if (active) setLoading(false); }); return () => { active = false; }; }, [onExpired]);
+  async function create(event) { event.preventDefault(); setSuccess(false); if (password !== confirm) { setFeedback('Las contraseñas no coinciden.'); return; } setBusy(true); setFeedback(''); try { const data = await request('users', { name, email, password }); setAccounts(previous => [data.user, ...previous]); setName(''); setEmail(''); setPassword(''); setConfirm(''); setSuccess(true); setFeedback('Cuenta creada. Ya puede iniciar sesión con el correo y la contraseña definidos.'); } catch (err) { setFeedback(err.message); if (err.status === 401) onExpired(); } finally { setBusy(false); } }
+  return <div className="accounts-grid"><section className="surface"><h2>Crear una cuenta</h2><p className="muted">El nuevo usuario tendrá acceso a Packs.</p><form onSubmit={create}><label className="field" htmlFor="new-name">Nombre<input id="new-name" value={name} onChange={e => setName(e.target.value)} required maxLength={80} autoComplete="off"/></label><label className="field" htmlFor="new-email">Correo electrónico<input id="new-email" type="email" value={email} onChange={e => setEmail(e.target.value)} required maxLength={254} autoComplete="off"/></label><Password id="new-password" label="Contraseña · mínimo 12 caracteres" value={password} onChange={e => setPassword(e.target.value)} autoComplete="new-password" minLength={12}/><Password id="confirm-password" label="Confirmar contraseña" value={confirm} onChange={e => setConfirm(e.target.value)} autoComplete="new-password" minLength={12}/><p className={`feedback ${success ? 'success' : 'error'}`} role="status">{feedback}</p><button className="primary wide" disabled={busy}>{busy ? <LoaderCircle className="spin" size={18}/> : <Plus size={18}/>} {busy ? 'Creando cuenta…' : 'Crear cuenta de usuario'}</button></form></section><section className="surface"><div className="list-heading"><h2>Cuentas</h2><span className="count">{accounts.length}</span></div>{loading ? <p className="muted">Cargando cuentas…</p> : accounts.length === 0 ? <p className="muted">No hay cuentas para mostrar.</p> : <div className="account-list">{accounts.map(account => <div className="account-row" key={account.id}><div className="avatar">{(account.name || account.email || '?').slice(0,1).toUpperCase()}</div><div className="account-details"><strong>{account.name || account.email}</strong><span>{account.email}</span></div><span className="role-tag">{account.role === 'admin' ? 'Admin' : 'Usuario'}</span></div>)}</div>}<p className="list-note">Se muestran hasta 100 cuentas. Solo administración puede consultar esta lista.</p></section></div>;
+}
+function Workspace({ user, onLogout }) {
+  const [tab, setTab] = useState('packs'); const [packs, setPacks] = useState([]); const [error, setError] = useState(''); const [loading, setLoading] = useState(true); const [loggingOut, setLoggingOut] = useState(false);
+  useEffect(() => { let active = true; request('packs').then(data => { if (active) setPacks(data.packs); }).catch(err => { if (active) { setError(err.message); if (err.status === 401) onLogout(); } }).finally(() => { if (active) setLoading(false); }); return () => { active = false; }; }, [onLogout]);
+  async function logout() { setLoggingOut(true); try { await request('logout', {}); onLogout(); } catch (err) { setError(err.message); } finally { setLoggingOut(false); } }
+  return <div className="private-shell"><aside className="sidebar"><Brand/><span className="nav-caption">ESPACIO PRIVADO</span><nav aria-label="Panel privado"><button className={tab === 'packs' ? 'nav-item active' : 'nav-item'} onClick={() => setTab('packs')}><Layers3 size={19}/> Packs <ChevronRight size={15}/></button>{user.role === 'admin' && <button className={tab === 'accounts' ? 'nav-item active' : 'nav-item'} onClick={() => setTab('accounts')}><Users size={19}/> Cuentas <ChevronRight size={15}/></button>}</nav><div className="sidebar-help"><MessageCircle size={23}/><strong>Hablemos directamente.</strong><p>Solicitudes, precios y atención personalizada.</p><WhatsApp className="text-link" message="Hola, necesito ayuda con mi cuenta de Nexora.">Contactar</WhatsApp></div><div className="sidebar-bottom"><ShieldCheck size={15}/> SOLO MIEMBROS</div></aside><div className="private-content"><header className="private-header"><div className="breadcrumb">Espacio privado <span>/</span> {tab === 'packs' ? 'Packs' : 'Cuentas'}</div><div className="user-menu"><span>{user.name || user.email}<small>{user.role === 'admin' ? 'Administrador' : 'Miembro'}</small></span><button className="icon-button" onClick={logout} disabled={loggingOut} aria-label="Cerrar sesión"><LogOut size={19}/></button></div></header><main className="workspace-main"><div className="page-heading"><div className="overline">{tab === 'packs' ? 'ELIGE TU PRÓXIMO PACK' : 'CONTROL DE ACCESO'}</div><h1>{tab === 'packs' ? <>Tus packs.<br className="mobile-break"/> A tu medida<span className="accent">.</span></> : <>Tú decides quién entra<span className="accent">.</span></>}</h1><p>{tab === 'packs' ? 'Consulta las opciones y acuerda los detalles directamente por WhatsApp.' : 'Crea cuentas privadas para tus usuarios.'}</p></div>{error && <p className="feedback error" role="alert">{error}</p>}{tab === 'packs' ? <>{loading ? <div className="surface muted">Cargando packs…</div> : <div className="packs-grid">{packs.map((pack, index) => <article className="pack-card" key={pack.quantity}><div className="pack-index">PACK / {String(index + 1).padStart(2, '0')}<Layers3 size={19}/></div><h2>Pack de {pack.quantity}</h2><div className="price"><span>$</span>{pack.price}<small>USD</small></div><div className="price-notes"><p><Check size={16}/> Rebajas y precios a convenir por WhatsApp.</p><p><Bitcoin size={17}/> Se puede pagar con cripto.</p></div><WhatsApp className="pack-button" message={`Hola, me interesa el pack de ${pack.quantity} por ${pack.price} USD. Quiero consultar el precio y las opciones de pago.`}>Consultar pack</WhatsApp></article>)}</div>}<section className="contact-strip"><div className="contact-icon"><MessageCircle size={24}/></div><div><h2>El mejor acuerdo empieza conversando.</h2><p>Consulta las rebajas y coordina tu pago directamente con nosotros.</p></div><WhatsApp className="text-link" message="Hola, quiero consultar los packs y los precios de Nexora.">809 383 5504</WhatsApp></section><div className="payment-note"><LockKeyhole size={14}/> La disponibilidad, la moneda y la red de pago se acuerdan por WhatsApp.</div></> : <Accounts onExpired={onLogout}/>}</main><footer className="private-footer">NEXORA STUDIOS <span>ACCESO PRIVADO</span></footer></div></div>;
+}
+export default function App() {
+  const [user, setUser] = useState(null); const [loading, setLoading] = useState(true); const [error, setError] = useState('');
+  useEffect(() => { let active = true; request('me').then(data => { if (active) setUser(data.user); }).catch(err => { if (active && err.status !== 401) setError(err.message); }).finally(() => { if (active) setLoading(false); }); return () => { active = false; }; }, []);
+  if (loading) return <div className="boot-screen"><Brand/><LoaderCircle className="spin"/><p>Comprobando acceso…</p></div>;
+  return user ? <Workspace user={user} onLogout={clearUser}/> : <Login onLogin={setUser} initialError={error}/>;
+  function clearUser() { setUser(null); setError(''); }
+}
